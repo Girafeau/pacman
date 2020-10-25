@@ -25,7 +25,7 @@ def dessiner_carte():
                 dessin_cases[x][y] = dessin.create_rectangle(x * 50, y * 50, x * 50 + 50, y * 50 + 50, fill="red")
             else:
                 dessin.create_rectangle(x * 50, y * 50, x * 50 + 50, y * 50 + 50, fill="blue")
-                dessin_cases[x][y] = dessin.create_rectangle(x * 50 + 20, y * 50 + 20, x * 50 + 30, y * 50 + 30, fill="green")
+                dessin_cases[x][y] = dessin.create_rectangle(x * 50 + 20, y * 50 + 20, x * 50 + 30, y * 50 + 30, fill="pink")
 
 dessin_pacman = 0
 def dessiner_pacman():
