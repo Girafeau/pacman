@@ -8,3 +8,5 @@ class PacMan(Personnage):
     def manger_bonbon(self):
         if self.carte.cases[self.x][self.y].bonbon == True:
             self.carte.cases[self.x][self.y].bonbon = False
+            return True
+        return False
