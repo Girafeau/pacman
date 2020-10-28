@@ -22,18 +22,18 @@ def dessiner_carte():
     for x in range(0, len(carte.cases)):
         for y in range(0, len(carte.cases[x])):
             if carte.cases[x][y].type == 'mur':
-                dessin_cases[x][y] = dessin.create_rectangle(x * 50, y * 50, x * 50 + 50, y * 50 + 50, fill="red")
+                dessin_cases[x][y] = dessin.create_rectangle(x * 50, y * 50, x * 50 + 50, y * 50 + 50, fill="black")
             else:
-                dessin.create_rectangle(x * 50, y * 50, x * 50 + 50, y * 50 + 50, fill="blue")
-                dessin_cases[x][y] = dessin.create_rectangle(x * 50 + 20, y * 50 + 20, x * 50 + 30, y * 50 + 30, fill="pink")
+                dessin.create_rectangle(x * 50, y * 50, x * 50 + 50, y * 50 + 50, fill="grey")
+                dessin_cases[x][y] = dessin.create_oval(x * 50 + 20, y * 50 + 20, x * 50 + 30, y * 50 + 30, fill="pink")
 
 dessin_pacman = 0
 def dessiner_pacman():
     global dessin
     global dessin_pacman
     global pacman
-    dessin_pacman = dessin.create_rectangle(pacman.x * 50 + 20, pacman.y * 50 + 20, pacman.x * 50 + 30,
-                                            pacman.y * 50 + 30, fill="yellow")
+    dessin_pacman = dessin.create_oval(pacman.x * 50 + 15, pacman.y * 50 + 15, pacman.x * 50 + 35,
+                                            pacman.y * 50 + 35, fill="yellow")
 
 def effacer_pacman():
     global dessin
@@ -47,7 +47,7 @@ def dessiner_fantomes():
     global dessin_fantomes
     global fantomes
     for i in range(0, len(fantomes)):
-        dessin_fantomes[i] = dessin.create_rectangle(fantomes[i].x * 50 + 20, fantomes[i].y * 50 + 20, fantomes[i].x * 50 + 30, fantomes[i].y * 50 + 30,
+        dessin_fantomes[i] = dessin.create_rectangle(fantomes[i].x * 50 + 15, fantomes[i].y * 50 + 15, fantomes[i].x * 50 + 35, fantomes[i].y * 50 + 35,
                                     fill="purple")
 
 def effacer_fantomes():
@@ -80,50 +80,74 @@ def avancer_pacman():
     effacer_pacman()
     dessiner_pacman()
 
+def dessiner_fantome(i, couleur):
+    global dessin
+    global dessin_fantomes
+    global fantomes
+    dessin_fantomes[i] = dessin.create_rectangle(fantomes[i].x * 50 + 15, fantomes[i].y * 50 + 15, fantomes[i].x * 50 + 35, fantomes[i].y * 50 + 35,
+                                    fill=couleur)
+
 def avancer_fantomes():
     global fantomes
-    for fantome in fantomes:
-        if voir_pacman(fantome) == True:
-            suivre_pacman(fantome)
+    effacer_fantomes()
+    for i in range (0, len(fantomes)):
+        if voir_pacman(fantomes[i]) == True:
+            print("voit")
+            suivre_pacman(fantomes[i])
+            dessiner_fantome(i, "brown")
         else:
             rand = random.randint(0, 3)
             if(rand == 0):
-                fantome.avancer_haut()
+                fantomes[i].avancer_haut()
             if(rand == 1):
-                fantome.avancer_bas()
+                fantomes[i].avancer_bas()
             if(rand == 2):
-                fantome.avancer_droite()
+                fantomes[i].avancer_droite()
             if(rand == 3):
-                fantome.avancer_gauche()
-    effacer_fantomes()
-    dessiner_fantomes()
+                fantomes[i].avancer_gauche()
+            dessiner_fantome(i, "purple")
+
 
 def voir_pacman(fantome):
     global fantomes
     global pacman
     global carte
+    mur = False
     if pacman.x == fantome.x:
         if pacman.y < fantome.y:
             for i in range(pacman.y, fantome.y):
                 if carte.cases[pacman.x][i].type == 'mur':
-                    return False
+                    mur = True
+            return mur == False
         else:
             for i in range(fantome.y, pacman.y):
                 if carte.cases[pacman.x][i].type == 'mur':
-                    return False
+                    mur = True
+            return mur == False
     if pacman.y == fantome.y:
         if pacman.x < fantome.x:
             for i in range(pacman.x, fantome.x):
                 if carte.cases[i][pacman.y].type == 'mur':
-                    return False
+                    mur = True
+            return mur == False
         else:
-            for i in range(fantome.y, pacman.y):
-                if carte.cases[i][pacman.y].type == "mur":
-                    return False
-    return True
+            for i in range(fantome.x, pacman.x):
+                if carte.cases[i][pacman.y].type == 'mur':
+                    mur = True
+            return mur == False
+    return False
 
 def suivre_pacman(fantome):
-    return True
+    if fantome.y > pacman.y:
+        fantome.avancer_haut()
+    if fantome.y < pacman.y:
+        fantome.avancer_bas()
+    if fantome.x > pacman.x:
+        fantome.avancer_gauche()
+    if fantome.x < pacman.x:
+        fantome.avancer_droite()
+
+
 
 def est_perdu():
     for fantome in fantomes:
@@ -156,7 +180,7 @@ def jeu():
                 else:
                     dessin.create_text(100, 100, text="Vous avez gagné")
 
-        if frame % 10000 == 0:
+        if frame % 11000 == 0:
             if est_perdu() == False | est_gagne() == False:
                 avancer_fantomes()
             else:
